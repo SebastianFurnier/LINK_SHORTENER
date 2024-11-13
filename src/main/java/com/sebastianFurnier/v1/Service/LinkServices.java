@@ -1,5 +1,7 @@
 package com.sebastianFurnier.v1.Service;
 
+import com.sebastianFurnier.v1.ExceptionHandler.ExceptionDetails;
+import com.sebastianFurnier.v1.ExceptionHandler.BadUrlException;
 import com.sebastianFurnier.v1.Model.ShortLink;
 import com.sebastianFurnier.v1.Repository.LinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,11 @@ public class LinkServices implements ILinkServices {
     private final String webUrl = System.getenv("WEB_URL");
 
     @Override
-    public String createShortUrl(String url) throws NoSuchAlgorithmException {
+    public String createShortUrl(String url) throws NoSuchAlgorithmException, BadUrlException {
 
         if(checkUrl(url))
-            throw new RuntimeException();
+            throw new BadUrlException("This URL is already shortened",
+                    new ExceptionDetails("This URL isn't valid because it looks already shortened", "Error"));
 
         String urlAux = searchUrlById(url);
 
