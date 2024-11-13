@@ -13,9 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class LinkServices implements LinkServicesI{
+public class LinkServices implements ILinkServices {
     @Autowired
     private LinkRepository linkRepository;
+
+    private final String webUrl = System.getenv("WEB_URL");
 
     @Override
     public String createShortUrl(String url) throws NoSuchAlgorithmException {
@@ -28,14 +30,14 @@ public class LinkServices implements LinkServicesI{
         if (urlAux != null)
             return urlAux;
 
-        ShortLink newLinkModel = new ShortLink(url, shortUrl(url));
+        ShortLink newLinkModel = new ShortLink(shortUrl(url), url);
         linkRepository.save(newLinkModel);
 
-        return "localhost:8080/" + newLinkModel.getShortId();
+        return "localhost:8080/" + newLinkModel.getId();
     }
 
     private boolean checkUrl(String url){
-        Pattern pattern = Pattern.compile("localhost", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile(webUrl, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(url);
         return matcher.find();
     }
@@ -50,8 +52,8 @@ public class LinkServices implements LinkServicesI{
     }
 
     @Override
-    public String searchUrlByShortId(String shortId){
-        Optional<ShortLink> myUrl = linkRepository.findByShortId(shortId);
+    public String searchUrlByUrl(String url){
+        Optional<ShortLink> myUrl = linkRepository.findByUrl(url);
 
         if(myUrl.isEmpty())
             return null;
@@ -71,6 +73,6 @@ public class LinkServices implements LinkServicesI{
 
         ShortLink myLink = myUrl.get();
 
-        return myLink.getShortId();
+        return myLink.getUrl();
     }
 }

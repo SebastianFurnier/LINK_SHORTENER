@@ -15,5 +15,5 @@ import lombok.Setter;
 public class ShortLink {
     @Id
     private String id;
-    private String shortId;
+    private String url;
 }

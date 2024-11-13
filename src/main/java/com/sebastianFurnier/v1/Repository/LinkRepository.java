@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface LinkRepository extends JpaRepository<ShortLink, String> {
-    public Optional<ShortLink> findByShortId(String shortId);
+    public Optional<ShortLink> findByUrl(String shortId);
 }
