@@ -24,7 +24,7 @@ public class LinkServices implements ILinkServices {
     @Override
     public String createShortUrl(String url) throws NoSuchAlgorithmException, BadUrlException {
 
-        if(checkUrl(url))
+        if(checkShortenedUrl(url))
             throw new BadUrlException("This URL is already shortened",
                     new ExceptionDetails("This URL isn't valid because it looks already shortened", "Error"));
 
@@ -33,29 +33,40 @@ public class LinkServices implements ILinkServices {
         if (urlAux != null)
             return urlAux;
 
-        ShortLink newLinkModel = new ShortLink(shortUrl(url), url);
+        String checkedHttpUrl = hasHttp(url);
+
+        ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl);
         linkRepository.save(newLinkModel);
 
-        return "localhost:8080/" + newLinkModel.getId();
+        return newLinkModel.getId();
     }
 
-    private boolean checkUrl(String url){
+    private boolean checkShortenedUrl(String url){
+        if (webUrl == null)
+            return true;
         Pattern pattern = Pattern.compile(webUrl, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(url);
         return matcher.find();
     }
 
+    private String hasHttp(String url){
+        Pattern pattern = Pattern.compile("http", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(url);
 
-    private String shortUrl(String url) throws NoSuchAlgorithmException {
+        return matcher.find() ? url : "https://" + url;
+    }
+
+    private String makeShortUrl(String url) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] digest = md.digest(url.getBytes());
         BigInteger number = new BigInteger(1, digest);
         String hashText = number.toString(36);
+
         return hashText.substring(0,6);
     }
 
     @Override
-    public String searchUrlByUrl(String url){
+    public String searchIdByUrl(String url){
         Optional<ShortLink> myUrl = linkRepository.findByUrl(url);
 
         if(myUrl.isEmpty())
@@ -65,7 +76,6 @@ public class LinkServices implements ILinkServices {
 
         return myLink.getId();
     }
-
 
     @Override
     public String searchUrlById(String id) {
