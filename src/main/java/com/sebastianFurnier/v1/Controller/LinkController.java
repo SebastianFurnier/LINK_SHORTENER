@@ -27,24 +27,20 @@ public class LinkController {
 
     @PostMapping("/shortener/{url}")
     public ResponseEntity<Map<String, String>> createShortUrl(@PathVariable String url)
-            throws NoSuchAlgorithmException {
+            throws NoSuchAlgorithmException, BadUrlException {
         Map<String, String> response = new HashMap<>();
-        try{
-            response.put("shortenedUrl", linkService.createShortUrl(url));
-        }catch (BadUrlException ex){
-            return handleBadUrlException(ex);
-        }
+
+        response.put("shortenedUrl", linkService.createShortUrl(url));
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public RedirectView searchUrlByShortLink(@PathVariable String id){
+    public RedirectView searchUrlByShortLink(@PathVariable String id) throws BadUrlException {
         String url = linkService.searchUrlById(id);
 
         if (url == null) {
-            handleBadUrlException(new BadUrlException("Incorrect ID",
-                    new ExceptionDetails("This id does'n exist.", "ERROR")));
-            return new RedirectView();
+            throw new BadUrlException("Incorrect ID",
+                    new ExceptionDetails("This id does'n exist.", "ERROR"));
         }
         return new RedirectView(url);
     }
