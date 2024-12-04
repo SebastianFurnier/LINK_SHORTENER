@@ -26,9 +26,10 @@ public class LinkController {
     }
 
     @PostMapping("/shortener/{url}")
-    public ResponseEntity<Map<String, String>> createShortUrl(@PathVariable String url)
+    public ResponseEntity<Map<String, String>> createShortUrl(@RequestBody Map<String,String> request)
             throws NoSuchAlgorithmException, BadUrlException {
         Map<String, String> response = new HashMap<>();
+        String url = request.get("url");
 
         response.put("shortenedUrl", linkService.createShortUrl(url));
         return ResponseEntity.ok(response);
