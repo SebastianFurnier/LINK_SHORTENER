@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 @Service
 public class LinkServices implements ILinkServices {
+
     @Autowired
     private LinkRepository linkRepository;
 
@@ -23,33 +24,37 @@ public class LinkServices implements ILinkServices {
 
     @Override
     public String createShortUrl(String url) throws NoSuchAlgorithmException, BadUrlException {
+        if (checkShortenedUrl(url)) {
+            throw new BadUrlException(
+                    "This URL is already shortened",
+                    new ExceptionDetails("This URL isn't valid because it looks already shortened", "Error")
+            );
+        }
 
-        if(checkShortenedUrl(url))
-            throw new BadUrlException("This URL is already shortened",
-                    new ExceptionDetails("This URL isn't valid because it looks already shortened", "Error"));
-
-        String urlAux = searchUrlById(url);
-
-        if (urlAux != null)
-            return urlAux;
+        String existingId = searchIdByUrl(url);
+        if (existingId != null) {
+            return existingId;
+        }
 
         String checkedHttpUrl = hasHttp(url);
 
         ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl);
-        linkRepository.save(newLinkModel);
 
         return "https://" + webUrl + "/" + newLinkModel.getId();
     }
 
-    private boolean checkShortenedUrl(String url){
-        if (webUrl == null)
+    private boolean checkShortenedUrl(String url) {
+        if (webUrl == null) {
             return true;
+        }
+
         Pattern pattern = Pattern.compile(webUrl, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(url);
+
         return matcher.find();
     }
 
-    private String hasHttp(String url){
+    private String hasHttp(String url) {
         Pattern pattern = Pattern.compile("http", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(url);
 
@@ -62,30 +67,20 @@ public class LinkServices implements ILinkServices {
         BigInteger number = new BigInteger(1, digest);
         String hashText = number.toString(36);
 
-        return hashText.substring(0,6);
+        return hashText.substring(0, 6);
     }
 
     @Override
-    public String searchIdByUrl(String url){
+    public String searchIdByUrl(String url) {
         Optional<ShortLink> myUrl = linkRepository.findByUrl(url);
 
-        if(myUrl.isEmpty())
-            return null;
-
-        ShortLink myLink = myUrl.get();
-
-        return myLink.getId();
+        return myUrl.map(ShortLink::getId).orElse(null);
     }
 
     @Override
     public String searchUrlById(String id) {
         Optional<ShortLink> myUrl = linkRepository.findById(id);
 
-        if(myUrl.isEmpty())
-            return null;
-
-        ShortLink myLink = myUrl.get();
-
-        return myLink.getUrl();
+        return myUrl.map(ShortLink::getUrl).orElse(null);
     }
 }

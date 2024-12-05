@@ -11,12 +11,12 @@ import lombok.Setter;
 public class BadUrlException extends Exception {
     private ExceptionDetails details;
 
-    public BadUrlException(String message, ExceptionDetails details, Throwable e){
+    public BadUrlException(String message, ExceptionDetails details, Throwable e) {
         super(message, e);
         setDetails(details);
     }
 
-    public BadUrlException(String message, ExceptionDetails details){
+    public BadUrlException(String message, ExceptionDetails details) {
         super(message);
         setDetails(details);
     }

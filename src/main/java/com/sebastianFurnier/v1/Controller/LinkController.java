@@ -14,20 +14,35 @@ import java.util.Map;
 
 @RestController
 public class LinkController {
+
     @Autowired
     private ILinkServices linkService;
 
-    @ExceptionHandler(BadUrlException.class)
-    public ResponseEntity<Map<String, String>> handleBadUrlException(BadUrlException ex){
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("Error", ex.getMessage());
+    private static final String ERROR_KEY = "Error";
 
+    @ExceptionHandler(BadUrlException.class)
+    public ResponseEntity<Map<String, String>> handleBadUrlException(BadUrlException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        ExceptionDetails details = ex.getDetails();
+
+        errorResponse.put(ERROR_KEY, details.getUserMessage());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
+    @PostMapping("/shortener/{url}")
+    public ResponseEntity<Map<String, String>> createShortUrlOption(
+            @PathVariable String url) throws NoSuchAlgorithmException, BadUrlException {
+
+        Map<String, String> response = new HashMap<>();
+        response.put("shortenedUrl", linkService.createShortUrl(url));
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/shortener")
-    public ResponseEntity<Map<String, String>> createShortUrl(@RequestBody Map<String,String> request)
-            throws NoSuchAlgorithmException, BadUrlException {
+    public ResponseEntity<Map<String, String>> createShortUrl(
+            @RequestBody Map<String, String> request) throws NoSuchAlgorithmException, BadUrlException {
+
         Map<String, String> response = new HashMap<>();
         String url = request.get("url");
 
@@ -40,8 +55,10 @@ public class LinkController {
         String url = linkService.searchUrlById(id);
 
         if (url == null) {
-            throw new BadUrlException("Incorrect ID",
-                    new ExceptionDetails("This id does'n exist.", "ERROR"));
+            throw new BadUrlException(
+                    "Incorrect ID",
+                    new ExceptionDetails("This ID doesn't exist.", "ERROR")
+            );
         }
         return new RedirectView(url);
     }
