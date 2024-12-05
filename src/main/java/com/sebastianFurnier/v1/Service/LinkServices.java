@@ -40,6 +40,8 @@ public class LinkServices implements ILinkServices {
 
         ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl);
 
+        linkRepository.save(newLinkModel);
+
         return "https://" + webUrl + "/" + newLinkModel.getId();
     }
 
