@@ -74,13 +74,21 @@ public class LinkServices implements ILinkServices {
     public String searchIdByUrl(String url) {
         Optional<ShortLink> myUrl = linkRepository.findByUrl(url);
 
-        return myUrl.map(ShortLink::getId).orElse(null);
+        if (myUrl.isEmpty())
+            return null;
+
+        ShortLink myShortLink = myUrl.get();
+        return myShortLink.getId();
     }
 
     @Override
     public String searchUrlById(String id) {
         Optional<ShortLink> myUrl = linkRepository.findById(id);
 
-        return myUrl.map(ShortLink::getUrl).orElse(null);
+        if (myUrl.isEmpty())
+            return null;
+
+        ShortLink myShortLink = myUrl.get();
+        return myShortLink.getUrl();
     }
 }
