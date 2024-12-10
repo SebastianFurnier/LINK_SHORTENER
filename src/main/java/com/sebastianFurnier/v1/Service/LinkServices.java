@@ -93,6 +93,7 @@ public class LinkServices implements ILinkServices {
         ShortLink myShortLink = myUrl.get();
 
         myShortLink.setNumberOfClicks(myShortLink.getNumberOfClicks() + 1);
+        linkRepository.save(myShortLink);
         return myShortLink.getUrl();
     }
 }
