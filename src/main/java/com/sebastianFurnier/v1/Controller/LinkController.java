@@ -29,16 +29,6 @@ public class LinkController {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @PostMapping("/shortener/{url}")
-    public ResponseEntity<Map<String, String>> createShortUrlOption(
-            @PathVariable String url) throws NoSuchAlgorithmException, BadUrlException {
-
-        Map<String, String> response = new HashMap<>();
-        response.put("shortenedUrl", linkService.createShortUrl(url));
-
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/shortener")
     public ResponseEntity<Map<String, String>> createShortUrl(
             @RequestBody Map<String, String> request) throws NoSuchAlgorithmException, BadUrlException {
