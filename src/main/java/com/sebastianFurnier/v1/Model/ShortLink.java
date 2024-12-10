@@ -18,4 +18,5 @@ public class ShortLink {
     private String id;
     @Lob
     private String url;
+    private int numberOfClicks;
 }
