@@ -38,7 +38,7 @@ public class LinkServices implements ILinkServices {
 
         String checkedHttpUrl = hasHttp(url);
 
-        ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl);
+        ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl, 0);
 
         linkRepository.save(newLinkModel);
 
@@ -91,6 +91,8 @@ public class LinkServices implements ILinkServices {
             return null;
 
         ShortLink myShortLink = myUrl.get();
+
+        myShortLink.setNumberOfClicks(myShortLink.getNumberOfClicks() + 1);
         return myShortLink.getUrl();
     }
 }
