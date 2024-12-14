@@ -11,6 +11,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,9 +41,39 @@ public class LinkServices implements ILinkServices {
 
         ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl, 0);
 
+        int i = 0;
+        while(thereIsCollision(newLinkModel) || i == 10){
+            newLinkModel.setId(avoidCollision(newLinkModel.getId()));
+            i++;
+        }
+
+        if (i == 0)
+            return null;
+
         linkRepository.save(newLinkModel);
 
         return "https://" + webUrl + "/" + newLinkModel.getId();
+    }
+
+    private boolean thereIsCollision(ShortLink newLinkModel){
+        String url = newLinkModel.getUrl();
+        String urlAux = searchUrlById(newLinkModel.getId());
+
+        return url.equals(urlAux);
+    }
+
+    private String avoidCollision(String id){
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(36);
+
+        char randomSymbol;
+        if (randomIndex < 10) {
+            randomSymbol = (char) ('0' + randomIndex);
+        } else {
+            randomSymbol = (char) ('a' + randomIndex - 10);
+        }
+
+        return id + randomSymbol;
     }
 
     private boolean checkShortenedUrl(String url) {
