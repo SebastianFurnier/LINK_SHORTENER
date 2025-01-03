@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,8 @@ public class LinkServices implements ILinkServices {
 
     @Autowired
     private LinkRepository linkRepository;
+
+    private final Map<Long, ShortLink> urlCache = new ConcurrentHashMap<>();
 
     private final String webUrl = System.getenv("WEB_URL");
 
@@ -33,6 +37,7 @@ public class LinkServices implements ILinkServices {
         }
 
         String existingId = searchIdByUrl(url);
+
         if (existingId != null) {
             return existingId;
         }
