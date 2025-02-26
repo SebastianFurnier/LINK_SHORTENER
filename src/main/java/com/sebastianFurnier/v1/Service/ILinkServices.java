@@ -6,6 +6,6 @@ import java.security.NoSuchAlgorithmException;
 
 public interface ILinkServices {
     String searchUrlById(String id);
-    public String searchIdByUrl(String url);
-    public String createShortUrl(String url) throws NoSuchAlgorithmException, BadUrlException;
+    String searchIdByUrl(String url);
+    String createShortUrl(String url) throws NoSuchAlgorithmException, BadUrlException;
 }
