@@ -47,12 +47,12 @@ public class LinkServices implements ILinkServices {
         ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl, 0);
 
         int i = 0;
-        while(thereIsCollision(newLinkModel) || i == 10){
+        while(thereIsCollision(newLinkModel) && i <= 10){
             newLinkModel.setId(avoidCollision(newLinkModel.getId()));
             i++;
         }
 
-        if (i == 0)
+        if (i == 10)
             return null;
 
         linkRepository.save(newLinkModel);
