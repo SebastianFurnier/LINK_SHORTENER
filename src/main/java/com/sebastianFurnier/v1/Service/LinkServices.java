@@ -96,7 +96,7 @@ public class LinkServices implements ILinkServices {
 
     private boolean checkShortenedUrl(String url) {
         if (webUrl == null) {
-            return true;
+            return false;
         }
 
         Pattern pattern = Pattern.compile(webUrl, Pattern.CASE_INSENSITIVE);
