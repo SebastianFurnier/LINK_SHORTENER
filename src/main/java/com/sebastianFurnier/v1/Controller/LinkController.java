@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api")
 public class LinkController {
 
     @Autowired
@@ -51,7 +52,7 @@ public class LinkController {
     }
 
 
-    @GetMapping("/api/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<Map<String, String>> searchUrlByShortLink(@PathVariable String id) throws BadUrlException {
         String url = linkService.searchUrlById(id);
 
