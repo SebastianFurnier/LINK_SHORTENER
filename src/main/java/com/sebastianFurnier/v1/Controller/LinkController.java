@@ -40,7 +40,7 @@ public class LinkController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/{id}")
     public ResponseEntity<Map<String, String>> searchUrlByShortLink(@PathVariable String id) throws BadUrlException {
         String url = linkService.searchUrlById(id);
 
