@@ -41,7 +41,7 @@ public class LinkController {
     }
 
     @GetMapping("/{id}")
-    public RedirectView searchUrlByShortLink(@PathVariable String id) throws BadUrlException {
+    public ResponseEntity<Map<String, String>> searchUrlByShortLink(@PathVariable String id) throws BadUrlException {
         String url = linkService.searchUrlById(id);
 
         if (url == null) {
@@ -50,6 +50,9 @@ public class LinkController {
                     new ExceptionDetails("This ID doesn't exist.", "ERROR")
             );
         }
-        return new RedirectView(url);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("url", url);
+        return ResponseEntity.ok(response);
     }
 }

@@ -22,9 +22,6 @@ public class LinkServices implements ILinkServices {
 
     @Autowired
     private LinkRepository linkRepository;
-
-    private final Map<Long, ShortLink> urlCache = new ConcurrentHashMap<>();
-
     private final String webUrl = System.getenv("WEB_URL");
 
     @Override
@@ -36,13 +33,20 @@ public class LinkServices implements ILinkServices {
             );
         }
 
-        String existingId = searchIdByUrl(url);
+        String checkedHttpUrl = hasHttp(url);
+
+        if (!validUrl(checkedHttpUrl)) {
+            throw new BadUrlException(
+                    "This URL is no correct.",
+                    new ExceptionDetails("This is not a valid URL, try again.", "Error")
+            );
+        }
+
+        String existingId = searchIdByUrl(checkedHttpUrl);
 
         if (existingId != null) {
             return existingId;
         }
-
-        String checkedHttpUrl = hasHttp(url);
 
         ShortLink newLinkModel = new ShortLink(makeShortUrl(checkedHttpUrl), checkedHttpUrl, 0);
 
@@ -57,7 +61,16 @@ public class LinkServices implements ILinkServices {
 
         linkRepository.save(newLinkModel);
 
-        return "https://" + webUrl + "/" + newLinkModel.getId();
+        return newLinkModel.getId();
+    }
+
+    private boolean validUrl (String url) {
+        Pattern URL_PATTERN = Pattern.compile(
+                "^(https?|ftp)://[\\w.-]+(?:\\.[\\w.-]+)+[/#?]?.*$",
+                Pattern.CASE_INSENSITIVE
+        );
+
+        return URL_PATTERN.matcher(url).matches();
     }
 
     private boolean thereIsCollision(ShortLink newLinkModel){
