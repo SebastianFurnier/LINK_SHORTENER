@@ -6,7 +6,6 @@ import com.sebastianFurnier.v1.Service.ILinkServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -33,12 +32,24 @@ public class LinkController {
     public ResponseEntity<Map<String, String>> createShortUrl(
             @RequestBody Map<String, String> request) throws NoSuchAlgorithmException, BadUrlException {
 
+        System.out.println("POST /shortener received with body: " + request);
+
         Map<String, String> response = new HashMap<>();
         String url = request.get("url");
 
-        response.put("shortenedUrl", linkService.createShortUrl(url));
-        return ResponseEntity.ok(request);
+        if (url == null || url.isEmpty()) {
+            throw new BadUrlException("Missing URL",
+                    new ExceptionDetails("The URL field is required.", "ERROR"));
+        }
+
+        String shortUrl = linkService.createShortUrl(url);
+        response.put("shortenedUrl", shortUrl);
+
+        System.out.println("Short URL generated: " + shortUrl);
+
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/api/{id}")
     public ResponseEntity<Map<String, String>> searchUrlByShortLink(@PathVariable String id) throws BadUrlException {
