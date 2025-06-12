@@ -37,7 +37,7 @@ public class LinkController {
         String url = request.get("url");
 
         response.put("shortenedUrl", linkService.createShortUrl(url));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(request);
     }
 
     @GetMapping("/api/{id}")
