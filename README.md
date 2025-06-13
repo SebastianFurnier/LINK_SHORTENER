@@ -3,7 +3,7 @@
 ## Description
 Welcome to **Link Shortener**, a personal project built with Maven, Java, Spring Boot, and MySQL.
 
-This app receives a URL and returns a shortened version, which is the backend URL plus an ID that identifies the original URL.
+This app receives a URL and returns an ID that represents the original URL in the DB.
 This ID is a combination of six numbers and letters.
 
 ### Can collisions occur between different URLs?
@@ -24,28 +24,10 @@ until a unique ID is created.
 > **Note:** This project is for practice purposes only.
 
 ## Try it out
-You can test it at the following link:  
-[https://sf.up.railway.app/shortener](http://sf.up.railway.app/shortener)
+You can test it at the front-end web page:  
+[https://sfshortlink.vercel.app](https://sfshortlink.vercel.app/)
 
-## How to Use
-### 1. Using Postman
-You can interact with the project by sending requests via Postman.
-Create a POST request and send the following JSON body:
+You can see the front-end code [here](https://github.com/SebastianFurnier/Link-shortener-front)
 
-```json
-{
-    "url": "(your url)"
-}
-```
-![Postman 1](Postman1.PNG)
-
-
-### 2. Api Response
-The API will return a shortened URL that you can copy and paste into your browser.
-This shortened link will redirect you to the original URL.
-
-![Postman 2](Postman2.PNG)
-
-### 3. Example of use
-
-![example](use_example.gif)
+## For comments you can contact me here:
+[portfolio](https://sebastianfurnier.vercel.app/)
